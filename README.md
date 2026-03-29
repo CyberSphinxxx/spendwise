@@ -1,16 +1,71 @@
-# React + Vite
+# SpendWise / WealthWise Setup Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to the project! Since you just cloned this repository from GitHub, **you are missing some files that are deliberately excluded from version control.**
 
-Currently, two official plugins are available:
+Specifically, you are missing:
+1. **`node_modules`** - You need to install dependencies for each specific part of the app.
+2. **`.env`** - The environment variables containing the database connection and secret passwords.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Follow these steps exactly to get the project running locally without errors.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Step 1: Install Dependencies
+This project has 4 different directories that need their packages installed. Open your terminal and run the following commands sequentially:
 
-## Expanding the ESLint configuration
+```bash
+# 1. Install root dependencies (Main web app)
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 2. Install backend server dependencies
+cd server
+npm install
+cd ..
+
+# 3. Install admin portal dependencies
+cd admin
+npm install
+cd ..
+
+# 4. Install mobile app dependencies
+cd mobile
+npm install
+cd ..
+```
+
+## Step 2: Setup Environment Variables
+Because passwords and database keys should not be pushed to GitHub, you won't have a `.env` file in the `server` directory.
+
+1. Go into the `server` folder.
+2. You will see a file named `.env.example`.
+3. Rename or copy this file to `.env` (just `.env` - no name before the dot).
+4. Open the new `.env` file and replace the `<username>:<password>` placeholder in the `MONGO_URI` with the actual database credentials provided by the team.
+
+## Step 3: Run the Development Servers
+You will need multiple terminal windows (or split terminal) to run all parts of the application at once.
+
+**Terminal 1: Start the Backend Server**
+```bash
+cd server
+npm start
+```
+
+**Terminal 2: Start the Web App (Frontend)**
+```bash
+npm run dev
+```
+
+**Terminal 3: Start the Admin Portal**
+```bash
+cd admin
+npm run dev
+```
+
+**Terminal 4: Start the Mobile App (React Native/Expo)**
+```bash
+cd mobile
+npx expo start
+```
+
+## Need Help?
+If you encounter `Failed to fetch` or `Unauthorized 401` errors when logging in, make sure your **Backend Server** is currently running and that you connected to the right MongoDB database in your `.env` file.
