@@ -78,6 +78,21 @@ const AdminLogin = () => {
                         {isLoading ? 'Signing In...' : 'Sign In'}
                     </button>
                 </form>
+
+                <div style={{
+                    marginTop: '20px',
+                    padding: '14px 16px',
+                    background: 'rgba(59,130,246,0.08)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(59,130,246,0.2)',
+                    fontSize: '13px',
+                    color: 'var(--text-muted)',
+                    lineHeight: '1.8'
+                }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Demo credentials</strong><br />
+                    Email: <code style={{ color: 'var(--accent)' }}>admin@spendwise.com</code><br />
+                    Password: <code style={{ color: 'var(--accent)' }}>demo123</code>
+                </div>
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Expenses.css';
 import AddExpenseModal from '../components/AddExpenseModal';
 import { useAuth } from '../context/AuthContext';
+import { getExpenses, addExpense, deleteExpense } from '../data/mockApi';
 
 const Expenses = () => {
     const { getToken } = useAuth();
@@ -19,10 +20,7 @@ const Expenses = () => {
     useEffect(() => {
         const fetchExpenses = async () => {
             try {
-                const response = await fetch('/api/expenses', {
-                    headers: { Authorization: `Bearer ${getToken()}` }
-                });
-                const data = await response.json();
+                const data = await getExpenses();
                 setExpenses(data);
             } catch (error) {
                 console.error('Error fetching expenses:', error);
@@ -38,15 +36,7 @@ const Expenses = () => {
     // ══════════════════════════════════════════════════════════
     const handleAddExpense = async (newExpense) => {
         try {
-            const response = await fetch('/api/expenses', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getToken()}`
-                },
-                body: JSON.stringify(newExpense),
-            });
-            const data = await response.json();
+            const data = await addExpense(newExpense);
             setExpenses(prev => [data, ...prev]);
             setIsModalOpen(false);
         } catch (error) {
@@ -61,10 +51,7 @@ const Expenses = () => {
     // ══════════════════════════════════════════════════════════
     const handleDeleteExpense = async (id) => {
         try {
-            await fetch(`/api/expenses/${id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${getToken()}` }
-            });
+            await deleteExpense(id);
             setExpenses(prev => prev.filter(exp => exp._id !== id));
         } catch (error) {
             console.error('Error deleting expense:', error);

@@ -1,7 +1,6 @@
 // src/context/AuthContext.jsx
+// ⚠️ MOCK MODE — No backend required. All auth is simulated locally.
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
-const API_URL = '/api/auth';
 
 const AuthContext = createContext();
 
@@ -9,99 +8,89 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+// Mock user database
+const MOCK_USERS = [
+  { id: '1', name: 'Admin User', email: 'admin@spendwise.com', role: 'admin', password: 'demo123' },
+  { id: '2', name: 'Sarah Johnson', email: 'sarah@example.com', role: 'user', password: 'demo123' },
+];
+
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // On mount, check for stored token and restore session
+  // On mount, restore session from localStorage
   useEffect(() => {
-    const restoreSession = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const res = await fetch(`${API_URL}/me`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (res.ok) {
-            const user = await res.json();
-            setCurrentUser(user);
-          } else {
-            localStorage.removeItem('token');
-          }
-        } catch {
-          localStorage.removeItem('token');
-        }
+    const stored = localStorage.getItem('mockUser');
+    if (stored) {
+      try {
+        setCurrentUser(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem('mockUser');
       }
-      setLoading(false);
-    };
-    restoreSession();
+    }
+    setLoading(false);
   }, []);
 
-  // Login function
+  // Mock login — accepts demo accounts or any email/password
   const login = async (email, password) => {
-    let res;
-    try {
-      res = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-    } catch (err) {
-      throw new Error('Unable to connect to the server. Please make sure the backend is running.');
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    const found = MOCK_USERS.find(u => u.email === email && u.password === password);
+
+    if (found) {
+      const user = { id: found.id, name: found.name, email: found.email, role: found.role };
+      localStorage.setItem('mockUser', JSON.stringify(user));
+      localStorage.setItem('token', 'mock-jwt-token-' + found.id);
+      setCurrentUser(user);
+      return user;
     }
 
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error('Server returned an invalid response. Please make sure the backend server is running on port 5000.');
+    // Allow any email/password combo for easy testing
+    if (email && password) {
+      const user = {
+        id: 'guest-' + Date.now(),
+        name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+        email,
+        role: 'user'
+      };
+      localStorage.setItem('mockUser', JSON.stringify(user));
+      localStorage.setItem('token', 'mock-jwt-token-guest');
+      setCurrentUser(user);
+      return user;
     }
 
-    if (!res.ok) {
-      throw new Error(data.message || 'Login failed');
-    }
-
-    localStorage.setItem('token', data.token);
-    setCurrentUser({ id: data.id, name: data.name, email: data.email, role: data.role });
-    return data;
+    throw new Error('Please enter both email and password');
   };
 
-  // Signup function
+  // Mock signup
   const signup = async (email, password, name) => {
-    let res;
-    try {
-      res = await fetch(`${API_URL}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-    } catch (err) {
-      throw new Error('Unable to connect to the server. Please make sure the backend is running.');
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    if (!email || !password || !name) {
+      throw new Error('All fields are required');
     }
 
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error('Server returned an invalid response. Please make sure the backend server is running on port 5000.');
-    }
-
-    if (!res.ok) {
-      throw new Error(data.message || 'Signup failed');
-    }
-
-    localStorage.setItem('token', data.token);
-    setCurrentUser({ id: data.id, name: data.name, email: data.email, role: data.role });
-    return data;
+    const user = {
+      id: 'user-' + Date.now(),
+      name,
+      email,
+      role: 'user'
+    };
+    localStorage.setItem('mockUser', JSON.stringify(user));
+    localStorage.setItem('token', 'mock-jwt-token-' + user.id);
+    setCurrentUser(user);
+    return user;
   };
 
-  // Logout function
+  // Logout
   const logout = () => {
+    localStorage.removeItem('mockUser');
     localStorage.removeItem('token');
     setCurrentUser(null);
   };
 
-  // Helper to get token for API calls
+  // Helper to get token for API calls (returns mock token)
   const getToken = () => localStorage.getItem('token');
 
   const value = {

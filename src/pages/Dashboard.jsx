@@ -4,6 +4,7 @@ import AddExpenseModal from '../components/AddExpenseModal';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/Card';
+import { getExpenses, addExpense } from '../data/mockApi';
 
 const Dashboard = () => {
     const { getToken } = useAuth();
@@ -17,10 +18,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchExpenses = async () => {
             try {
-                const response = await fetch('/api/expenses', {
-                    headers: { Authorization: `Bearer ${getToken()}` }
-                });
-                const data = await response.json();
+                const data = await getExpenses();
                 setExpenses(data);
             } catch (error) {
                 console.error('Error fetching expenses:', error);
@@ -38,15 +36,7 @@ const Dashboard = () => {
     // ══════════════════════════════════════════════════════════
     const handleAddExpense = async (newExpense) => {
         try {
-            const response = await fetch('/api/expenses', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getToken()}`
-                },
-                body: JSON.stringify(newExpense),
-            });
-            const data = await response.json();
+            const data = await addExpense(newExpense);
             setExpenses(prev => [data, ...prev]);
             setIsModalOpen(false);
         } catch (error) {

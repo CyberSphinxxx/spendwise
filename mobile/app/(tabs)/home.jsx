@@ -138,14 +138,14 @@ export default function HomeScreen() {
                         <Ionicons name="trending-up" size={20} color={COLORS.primary} />
                     </View>
                     <Text style={styles.summaryLabel}>Investments</Text>
-                    <Text style={styles.summaryValue}>
-                        ₱{(summary.investments.totalValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+                        ₱{(summary.investments.totalValue || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                     <Text style={[styles.summaryChange, {
                         color: (summary.investments.totalProfitLoss || 0) >= 0 ? COLORS.success : COLORS.danger
                     }]}>
                         {(summary.investments.totalProfitLoss || 0) >= 0 ? '+' : ''}
-                        ₱{(summary.investments.totalProfitLoss || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        ₱{(summary.investments.totalProfitLoss || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                 </TouchableOpacity>
 
@@ -154,8 +154,8 @@ export default function HomeScreen() {
                         <Ionicons name="wallet" size={20} color={COLORS.secondary} />
                     </View>
                     <Text style={styles.summaryLabel}>Savings</Text>
-                    <Text style={styles.summaryValue}>
-                        ₱{(summary.savings.totalSaved || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+                        ₱{(summary.savings.totalSaved || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                     <Text style={styles.summarySubtext}>{summary.savings.activeGoals || 0} active goals</Text>
                 </TouchableOpacity>
@@ -165,8 +165,8 @@ export default function HomeScreen() {
                         <Ionicons name="cash" size={20} color={COLORS.accent} />
                     </View>
                     <Text style={styles.summaryLabel}>Loans</Text>
-                    <Text style={styles.summaryValue}>
-                        ₱{(summary.loans.totalRemaining || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+                        ₱{(summary.loans.totalRemaining || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                     <Text style={styles.summarySubtext}>{summary.loans.activeLoans || 0} active</Text>
                 </TouchableOpacity>
@@ -176,11 +176,11 @@ export default function HomeScreen() {
                         <Ionicons name="pie-chart" size={20} color={COLORS.info} />
                     </View>
                     <Text style={styles.summaryLabel}>Budget Used</Text>
-                    <Text style={styles.summaryValue}>
-                        ₱{(summary.budgets.totalSpent || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+                        ₱{(summary.budgets.totalSpent || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                     <Text style={styles.summarySubtext}>
-                        of ₱{(summary.budgets.totalLimit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        of ₱{(summary.budgets.totalLimit || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -292,14 +292,15 @@ const styles = StyleSheet.create({
     summaryGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
+        justifyContent: 'space-between',
         paddingHorizontal: SIZES.padding.lg,
-        gap: 12,
     },
     summaryCard: {
         backgroundColor: COLORS.card,
         borderRadius: SIZES.radius.lg,
         padding: 16,
-        width: '47.5%',
+        width: '48%',
+        marginBottom: 16,
         ...SHADOWS.small,
     },
     summaryIconWrap: {
@@ -317,9 +318,11 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     summaryValue: {
-        fontSize: 18,
+        fontSize: 16,
         color: COLORS.text,
         ...FONTS.bold,
+        flexShrink: 1,
+        minHeight: 22,
     },
     summaryChange: {
         fontSize: 12,
